@@ -4,17 +4,10 @@ import Grid from './components/grid';
 
 function App() {
 
-  const [data, setData] = useState({});
-
-  const [gridData, setGridData] = useState([
-    ['red', '', 'green', ''],
-    ['', '', '', ''],
-    ['', 'blue', '', ''],
-    ['', '', '', ''],
-  ]);
+  const [gridData, setGridData] = useState([[]]);
 
   useEffect(() => {
-    fetch('/predict').then(res => res.json()).then(data => setData(data));
+    fetch('/generate').then(res => res.json()).then(data => setGridData(data.grid));
   }, []);
 
   return (
