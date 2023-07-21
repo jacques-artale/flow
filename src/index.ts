@@ -2,6 +2,7 @@ import express from 'express';
 
 import { Solver } from './solver/solver';
 import { Generator } from './generator/generator';
+import { GeneratorV2 } from './generator/generator_v2';
 
 const app = express();
 const port = 3001;
@@ -10,7 +11,7 @@ app.get('/generate', (req, res) => {
 
   console.log("generating");
 
-  const generator = new Generator();
+  const generator = new GeneratorV2();
   const grid = generator.generate();
 
   res.json({

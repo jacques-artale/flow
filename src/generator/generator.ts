@@ -2,8 +2,8 @@
 
 /**
  * Generator:
- * This algorithm is flawed as it allowes for an empty cell to be surrounded by
- * path cells which cannot expand to any new direction.
+ * This algorithm is flawed as it allows for an empty cell to be surrounded by
+ * path cells which cannot expand to any new directions.
  */
 
 
@@ -18,11 +18,11 @@ export class Generator {
 
   constructor() {}
 
-  generate(): String[][] {
+  generate(): number[][] {
 
-    const width = 8;
-    const height = 8;
-    const n_colors = 8;
+    const width = 4;
+    const height = 4;
+    const n_colors = 4;
 
     // create grid
     let grid: Cell[][] = Array.from({length: height}, () => new Array(width).fill({type: 'empty', color: 0}));
@@ -35,9 +35,6 @@ export class Generator {
  
     // continue until grid is filled
     while (!this.is_full(grid)) {
-      const s: String[][] = grid.map(row => row.map(cell => this.get_color(cell.color) + '.' + cell.type));
-      console.log(s); 
-
       // randomly select a color
       const color = Math.floor(Math.random() * n_colors) + 1;
       // randomly select one end of the colors
@@ -56,7 +53,7 @@ export class Generator {
     }
 
     // translate grid to color grid
-    const color_grid: String[][] = grid.map(row => row.map(cell => this.get_color(cell.color)));
+    const color_grid: number[][] = grid.map(row => row.map(cell => cell.color));
 
     return color_grid;
   }
@@ -157,23 +154,6 @@ export class Generator {
       }
     }
     return count;
-  }
-
-  /**
-   * converts color number to string color
-   * @param color number value of color
-   * @returns string representation of color
-   */
-  get_color(color: number): String {
-    if (color === 1) return 'red';
-    if (color === 2) return 'green';
-    if (color === 3) return 'blue';
-    if (color === 4) return 'yellow';
-    if (color === 5) return 'purple';
-    if (color === 6) return 'orange';
-    if (color === 7) return 'pink';
-    if (color === 8) return 'brown';
-    return 'white';
   }
 
 }

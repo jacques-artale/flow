@@ -12,7 +12,7 @@ function Grid({ gridData }) {
           {row.map((cell, colIndex) =>
             <div
               key={`cell-${rowIndex}-${colIndex}`}
-              style={{ width: '50px', height: '50px', backgroundColor: `${cell}`, margin: '0 5px', border: '4px solid black' }}
+              style={{ width: '50px', height: '50px', backgroundColor: `#${cell}`, margin: '0 5px', border: '4px solid black' }}
             ></div>
           )}
         </div>
