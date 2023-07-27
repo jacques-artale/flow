@@ -4,30 +4,7 @@
 // 2. a path must be at least 3 cells long
 // 3. a path may not cross another path
 // 4. a cell in a path may not be adjacent to more than 2 other cells in the path
-
-// (MIGHT CREATE SINGLE CELL PATHS)
-// chose a random color
-//  chose a random cell of that color
-//  expand to a random direction from that cell
-//  if no direction is found, move on to next color
-//  if a direction is found, expand to that direction
-//  repeat expansion random number of times (max)
-//  if max is reached, move on to next color
-// continue until grid is full
-
-
-
-// or
-// (MIGHT CREATE SINGLE CELL PATHS)
-// fill grid with random colors
-// pick random color
-// pick random endpoint of color
-// merge with random adjacent endpoint so long as requirement 4. is met
-//  fix endpoints (if either was alone in its path just move on, otherwise set both cells to 'path')
-// repeat until rule 4. cannot be met for any color or no adjacent endpoints exist
-
-
-// check if a set of holes has any contact with any endpoints
+// 5. each path must have only two endpoints
 
 
 type CellType = 'empty' | 'endpoint' | 'path';
@@ -41,12 +18,19 @@ export class GeneratorV2 {
 
   constructor() {}
 
+  /**
+   * Works by itterating over each cell in the grid, and expanding a path from it a random number of times
+   * or until it cannot expand any further.
+   * 
+   * This will leave some single cell paths.
+   * 
+   * @returns 2-dimensional array of numbers representing colors
+   */
   generate(): number[][] {
-
-    const width = 100;
-    const height = 100;
+    const width = 10;
+    const height = 10;
     const min_path_length = 3;
-    const max_path_length = 200;
+    const max_path_length = 10;
 
     // create grid
     let grid: Cell[][] = Array.from({length: height}, () => new Array(width).fill({type: 'empty', color: 0}));
@@ -61,7 +45,7 @@ export class GeneratorV2 {
         let expand = Math.floor(Math.random() * (max_path_length - min_path_length + 1)) + min_path_length;
         while (expand) {
           if (cell === undefined) break;
-          grid[cell[0]][cell[1]] = {type: 'endpoint', color: color};
+          grid[cell[0]][cell[1]] = {type: 'endpoint', color: color}; // CHECK THIS, IS IT RIGHT? OR JUST CREATING A BUNCH OF ENDPOINTS?
           cell = this.get_random_direction(grid, cell);
           expand--;
         }
@@ -89,10 +73,17 @@ export class GeneratorV2 {
     for (const direction of shuffled_directions) {
       const new_cell: [number, number] = [cell[0] + direction[0], cell[1] + direction[1]];
 
+      // check if cell in chosen direction is out of bounds
       if (new_cell[0] < 0 || new_cell[0] >= grid.length || new_cell[1] < 0 || new_cell[1] >= grid[0].length) continue;
 
+      // check if cell in chosen direction is empty
       if (grid[new_cell[0]][new_cell[1]].type === 'empty') {
+        // check if an expansion would break rule 4
         if (this.get_n_adjacent(grid, new_cell, grid[cell[0]][cell[1]].color) > 1) continue;
+
+        // check if an expansion would leave a hole in the grid which cannot be filled by a legal path
+        if (this.check_unfillable_holes(grid, new_cell)) continue;
+
         return new_cell;
       }
     }
@@ -120,6 +111,17 @@ export class GeneratorV2 {
     }
 
     return n_adjacent;
+  }
+
+  /**
+   * checks grid for holes which cannot be filled by a legal path
+   * @param grid 2-dimensional array of cells
+   * @param cell cell to look for holes nearby
+   * @returns boolean value representing if a hole was found
+   */
+  check_unfillable_holes(grid: Cell[][], cell: [number, number]): boolean {
+    // remember that 'cell' has not yet been expanded to
+    return false;
   }
 
   /**

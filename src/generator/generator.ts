@@ -18,8 +18,15 @@ export class Generator {
 
   constructor() {}
 
+  /**
+   * Works by randomly placing one end-point of each color, then randomly expanding
+   * until the grid is filled.
+   * 
+   * This will leave some single cell paths and may create unreachable cells.
+   * 
+   * @returns 2-dimensional array of numbers representing colors
+   */
   generate(): number[][] {
-
     const width = 4;
     const height = 4;
     const n_colors = 4;
