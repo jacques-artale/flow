@@ -13,28 +13,38 @@ interface Cell {
 }
 
 
+
+// TODO: FIX LEFTOVER ENDEPOINTS OR SOMETHING CAUSING MULTIPLE BRANCHES ON A PATH
+// TODO: FIX PATHS NOT BEING AT LEAST 3 CELLS LONG
+// TODO: FIX UNFILLABLE HOLES (WHICH ARE THEN FILLED BY SINGLE CELL PATHS)
+// TODO: MAKE MORE PERFORMANT
+// TODO: ALLOW ARBITRARY GRID SIZES
+
+
+
+
 export class GeneratorV4 {
 
   private color = 0;
 
   constructor() {}
 
-  // check later how the middle will be filled or how to make sure that paths are at least 3 cell long
-
   // then check how this works for arbitrary grid sizes, for example 6x9, 1x8 etc. or even 3x3 + 1 (I guess the ring will then be what is furthest away from the middle)
 
   generate(): number[][] {
 
-    const width = 9;
-    const height = 9;
+    const width = 15;
+    const height = 15;
 
     // create grid
     let grid: Cell[][] = Array.from({length: height}, () => Array.from({length: width}, () => ({type: 'empty', color: 0})));
-    
 
-    this.fill_ring(grid, 0);
-    this.extend_ring(grid, 0);
-    this.fill_ring(grid, 1);
+
+    for (let i = 0; i < width/2 - 1; i++) {
+      this.fill_ring(grid, i);
+      this.extend_ring(grid, i);
+    }
+    this.fill_ring(grid, Math.floor(width/2 - 1));
 
 
     // translate grid to color grid
@@ -53,58 +63,14 @@ export class GeneratorV4 {
     // convert ring to array of cells
     const cells = this.get_ring_cells(grid, ring);
 
-    // complete any remaining paths in ring
-    let remaining_cells: number[] = []; // array of indexes of cells that are endpoints
-    cells.forEach((cell, index) => {
-      if (this.get_cell(grid, cell).type === 'endpoint') remaining_cells.push(index);
-    });
-
-    for (const cell_index of remaining_cells) {
-      if (Math.random() < 0.5) continue; // 50% chance to skip this endpoint (to make it more random)
-
-      // check direction to move in
-      const left = (cell_index - 1) % cells.length; // MODULO DOES NOT WORK FOR NEGATIVE NUMBERS IN JAVASCRIPT
-      const right = (cell_index + 1) % cells.length;
-
-      console.log("cell_index: " + cell_index + ", cells_length: " + cells.length + ", left: " + left + ", right: " + right);
-      console.log(cells);
-
-      const neighbours_left = this.get_n_adjacent(grid, cells[left], this.get_cell(grid, cells[cell_index]).color);
-      const neighbours_right = this.get_n_adjacent(grid, cells[right], this.get_cell(grid, cells[cell_index]).color);
-
-      let direction = 0;
-      if (this.get_cell(grid, cells[left]).type === 'empty' && neighbours_left < 2) direction = -1;
-      else if (this.get_cell(grid, cells[right]).type === 'empty' && neighbours_right < 2) direction = 1;
-
-      if (direction !== 0) {
-        console.log("direction found");
-        const path_length = Math.floor(Math.random() * (cells.length - 1)) + 1; // pick random length
-
-        for (let i = 0; i < path_length; i += direction) {
-          const cell = this.get_cell(grid, cells[(cell_index + i) % cells.length]);
-          const next_cell_index = (cell_index + direction) % cells.length;
-          const next_cell = this.get_cell(grid, cells[next_cell_index]);
-
-          if (cell.type !== 'empty') break;
-
-          // first and last cells are endpoints
-          const cell_type = (i === 0 || i === path_length - 1 || next_cell.type !== 'empty') ? 'endpoint' : 'path';
-
-          cell.type = cell_type;
-          cell.color = this.get_cell(grid, cells[cell_index]).color;
-        }
-      }
-    }
-   
-
     // fill ring with more paths
     while (cells.some(cell => this.get_cell(grid, cell).type === 'empty')) {
-      let path_length = Math.floor(Math.random() * (cells.length - 1)) + 1; // pick random length
+      let path_length = Math.floor(Math.random() * ((cells.length - 1)) / 10) + 1; // pick random length
       let cell_index = (Math.floor(Math.random() * cells.length));          // pick random cell
 
       for (let i = 0; i < path_length; i++) {
         const cell = this.get_cell(grid, cells[cell_index]);
-        const next_cell_index = (cell_index + 1) % cells.length;
+        const next_cell_index = this.mod(cell_index + 1, cells.length);
         const next_cell = this.get_cell(grid, cells[next_cell_index]);
 
         if (cell.type !== 'empty') break;
@@ -130,11 +96,11 @@ export class GeneratorV4 {
    * @param ring ring which we want to extend
    */
   extend_ring(grid: Cell[][], ring: number) {
+    // extend endpoints to inner ring
     const cells = this.get_ring_cells(grid, ring);
-    // for each endpoint in cells
     cells.forEach(cell => {
       if (this.get_cell(grid, cell).type === 'endpoint') {
-        const expand = Math.floor(Math.random() * 2); // 0 or 1
+        const expand = Math.floor(Math.random() * 2); // 50% chance to extend endpoint to inner ring
         if (expand) {
           const inner_cell = this.get_inner_cell(grid, cell, ring);
           if (inner_cell && this.get_cell(grid, inner_cell).type === 'empty') {
@@ -146,6 +112,57 @@ export class GeneratorV4 {
         }
       }
     });
+
+    
+    // complete random paths in inner ring
+    const inner_ring_cells = this.get_ring_cells(grid, ring + 1);
+
+    let remaining_cells: number[] = []; // array of indexes of cells that are endpoints
+    inner_ring_cells.forEach((cell, index) => {
+      if (this.get_cell(grid, cell).type === 'endpoint') remaining_cells.push(index);
+    });
+
+    for (const cell_index of remaining_cells) {
+      if (Math.random() < 0.5) continue; // 50% chance to skip this endpoint (to make it more random)
+
+      const initial_cell = this.get_cell(grid, inner_ring_cells[cell_index]);
+
+      // check direction to move in
+      const left = this.mod(cell_index - 1, inner_ring_cells.length);
+      const right = this.mod(cell_index + 1, inner_ring_cells.length);
+
+      const neighbours_left = this.get_n_adjacent(grid, inner_ring_cells[left], initial_cell.color);
+      const neighbours_right = this.get_n_adjacent(grid, inner_ring_cells[right], initial_cell.color);
+
+      let direction = 0;
+      if (this.get_cell(grid, inner_ring_cells[left]).type === 'empty' && neighbours_left < 2) direction = -1;
+      else if (this.get_cell(grid, inner_ring_cells[right]).type === 'empty' && neighbours_right < 2) direction = 1;
+
+      // TODO: DIRECTION MIGHT NOT BE FOUND EVEN THOUGH THERE SHOULD BE A VALID DIRECTION
+
+      if (direction !== 0) {
+        const path_length = Math.floor(Math.random() * (inner_ring_cells.length - 1)) + 1; // pick random length
+
+        for (let i = direction; i < path_length; i += direction) {
+          const new_cell_index = this.mod(cell_index + i, inner_ring_cells.length);
+          const new_cell = this.get_cell(grid, inner_ring_cells[new_cell_index]);
+          const next_cell_index = this.mod(cell_index + direction, inner_ring_cells.length);
+          const next_cell = this.get_cell(grid, inner_ring_cells[next_cell_index]);
+
+          if (new_cell.type !== 'empty') break;
+          if (this.get_n_adjacent(grid, inner_ring_cells[new_cell_index], initial_cell.color) > 1) break;
+
+          // starting cell is now a path
+          if (i === 0) initial_cell.type = 'path';
+
+          // last cell is an endpoint
+          const cell_type = (i === path_length - 1 || next_cell.type !== 'empty') ? 'endpoint' : 'path';
+
+          new_cell.type = cell_type;
+          new_cell.color = initial_cell.color;
+        }
+      }
+    }
   }
 
   /**
@@ -238,6 +255,20 @@ export class GeneratorV4 {
     }
 
     return n_adjacent;
+  }
+
+
+  /**
+   * MODULO DOES NOT WORK AS YOU MIGHT THINK FOR NEGATIVE NUMBERS IN JAVASCRIPT:
+   * https://stackoverflow.com/questions/4467539/javascript-modulo-gives-a-negative-result-for-negative-numbers
+   * 
+   * simple modulo function that works with negative numbers
+   * @param n number to mod
+   * @param m modulo
+   * @returns n mod m
+   */
+  mod(n: number, m: number): number {
+    return ((n % m) + m) % m;
   }
 
 }

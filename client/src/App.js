@@ -9,7 +9,7 @@ function App() {
   useEffect(() => {
     fetch('/generate').then(res => res.json()).then(data => {
       const colorMap = generateColorPalette(data.grid.length * data.grid[0].length + 1);
-      const colored_grid = data.grid.map(row => row.map(cell => cell === 0 ? 'black' : colorMap[cell]));
+      const colored_grid = data.grid.map(row => row.map(cell => cell === 0 ? 'black' : colorMap[cell % colorMap.length]));
       setGridData(colored_grid);
 
       data.grid.forEach(row => {
