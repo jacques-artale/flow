@@ -13,8 +13,8 @@ interface Cell {
 }
 
 
-
-// TODO: FIX LEFTOVER ENDEPOINTS OR SOMETHING CAUSING MULTIPLE BRANCHES ON A PATH
+// TODO: FIX COLOR INCREMENTING MORE THAN IT SHOULD
+// TODO: FIX EMPTY CELLS
 // TODO: FIX PATHS NOT BEING AT LEAST 3 CELLS LONG
 // TODO: FIX UNFILLABLE HOLES (WHICH ARE THEN FILLED BY SINGLE CELL PATHS)
 // TODO: MAKE MORE PERFORMANT
@@ -31,15 +31,16 @@ export class GeneratorV4 {
 
   // then check how this works for arbitrary grid sizes, for example 6x9, 1x8 etc. or even 3x3 + 1 (I guess the ring will then be what is furthest away from the middle)
 
-  generate(): number[][] {
+  generate(): Cell[][] {
 
-    const width = 15;
-    const height = 15;
+    const width = 10;
+    const height = 10;
 
     // create grid
     let grid: Cell[][] = Array.from({length: height}, () => Array.from({length: width}, () => ({type: 'empty', color: 0})));
 
 
+    
     for (let i = 0; i < width/2 - 1; i++) {
       this.fill_ring(grid, i);
       this.extend_ring(grid, i);
@@ -47,10 +48,16 @@ export class GeneratorV4 {
     this.fill_ring(grid, Math.floor(width/2 - 1));
 
 
-    // translate grid to color grid
-    const color_grid: number[][] = grid.map(row => row.map(cell => cell.color));
+    // print grid width 1 as paths and 0 as endpoints
+    console.log(grid.map(row => row.map(cell => {
+      return cell.color;
+    }).join(' ')).join('\n'));
 
-    return color_grid;
+
+    // translate grid to color grid
+    //const color_grid: number[][] = grid.map(row => row.map(cell => cell.color));
+
+    return grid;
   }
 
   /**
@@ -67,6 +74,9 @@ export class GeneratorV4 {
     while (cells.some(cell => this.get_cell(grid, cell).type === 'empty')) {
       let path_length = Math.floor(Math.random() * ((cells.length - 1)) / 10) + 1; // pick random length
       let cell_index = (Math.floor(Math.random() * cells.length));          // pick random cell
+
+
+      // TODO: MAKE MORE IN UNIFORM WITH THE REST OF THE CODE IN extend_ring()
 
       for (let i = 0; i < path_length; i++) {
         const cell = this.get_cell(grid, cells[cell_index]);
@@ -104,10 +114,13 @@ export class GeneratorV4 {
         if (expand) {
           const inner_cell = this.get_inner_cell(grid, cell, ring);
           if (inner_cell && this.get_cell(grid, inner_cell).type === 'empty') {
+            
+            // if the cell is alone, leave it as an endpoint
+            const neighbours = this.get_n_adjacent(grid, cell, this.get_cell(grid, cell).color);
+            if (neighbours > 0) this.get_cell(grid, cell).type = 'path';
+
             this.get_cell(grid, inner_cell).type = 'endpoint';
             this.get_cell(grid, inner_cell).color = this.get_cell(grid, cell).color;
-      
-            this.get_cell(grid, cell).type = 'path';
           }
         }
       }
@@ -143,24 +156,29 @@ export class GeneratorV4 {
       if (direction !== 0) {
         const path_length = Math.floor(Math.random() * (inner_ring_cells.length - 1)) + 1; // pick random length
 
-        for (let i = direction; i < path_length; i += direction) {
-          const new_cell_index = this.mod(cell_index + i, inner_ring_cells.length);
+        for (let i = 1; i <= path_length; i++) {
+          const new_cell_index = this.mod(cell_index + (i * direction), inner_ring_cells.length);
           const new_cell = this.get_cell(grid, inner_ring_cells[new_cell_index]);
-          const next_cell_index = this.mod(cell_index + direction, inner_ring_cells.length);
-          const next_cell = this.get_cell(grid, inner_ring_cells[next_cell_index]);
 
-          if (new_cell.type !== 'empty') break;
-          if (this.get_n_adjacent(grid, inner_ring_cells[new_cell_index], initial_cell.color) > 1) break;
+          const old_cell_index = this.mod(cell_index + (i-1 * direction), inner_ring_cells.length);
+          const old_cell = this.get_cell(grid, inner_ring_cells[old_cell_index]);
+
+          // do we break the path before we intended to? set the old cell to endpoint
+          if (new_cell.type !== 'empty' || this.get_n_adjacent(grid, inner_ring_cells[new_cell_index], initial_cell.color) > 1) {
+            if (i !== 1) old_cell.type = 'endpoint';
+            break;
+          }
 
           // starting cell is now a path
-          if (i === 0) initial_cell.type = 'path';
+          if (i === 1) initial_cell.type = 'path';
 
-          // last cell is an endpoint
-          const cell_type = (i === path_length - 1 || next_cell.type !== 'empty') ? 'endpoint' : 'path';
+          // if this is the end, we set it to endpoint
+          const cell_type = (i === path_length) ? 'endpoint' : 'path';
 
           new_cell.type = cell_type;
           new_cell.color = initial_cell.color;
         }
+
       }
     }
   }
@@ -188,7 +206,7 @@ export class GeneratorV4 {
       inner_cell = [cell[0], cell[1] - 1];
     }
 
-    if (inner_cell) {
+    if (inner_cell && this.get_cell(grid, inner_cell).type === 'empty') {
       if (this.get_n_adjacent(grid, inner_cell, this.get_cell(grid, cell).color) < 2) return inner_cell;
     }
 
