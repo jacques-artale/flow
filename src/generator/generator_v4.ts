@@ -160,7 +160,7 @@ export class GeneratorV4 {
           const new_cell_index = this.mod(cell_index + (i * direction), inner_ring_cells.length);
           const new_cell = this.get_cell(grid, inner_ring_cells[new_cell_index]);
 
-          const old_cell_index = this.mod(cell_index + (i-1 * direction), inner_ring_cells.length);
+          const old_cell_index = this.mod(new_cell_index - direction, inner_ring_cells.length);
           const old_cell = this.get_cell(grid, inner_ring_cells[old_cell_index]);
 
           // do we break the path before we intended to? set the old cell to endpoint

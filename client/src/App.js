@@ -4,18 +4,18 @@ import Grid from './components/grid';
 
 function App() {
 
-  const [gridData, setGridData] = useState([[]]);
+  const [grid_data, set_grid_data] = useState([[]]);
 
   useEffect(() => {
     fetch('/generate').then(res => res.json()).then(data => {
-      const colorMap = generateColorPalette(data.grid.length * data.grid[0].length + 1);
+      const color_map = generate_color_palette(data.grid.length * data.grid[0].length + 1);
       const colored_grid = data.grid.map(row => row.map(cell => {
         return {
           ...cell,
-          color: cell.color === 0 ? 'FFFFFF' : colorMap[cell.color % colorMap.length]
+          color: cell.color === 0 ? 'FFFFFF' : color_map[cell.color % color_map.length]
         }
       }));
-      setGridData(colored_grid);
+      set_grid_data(colored_grid);
 
       data.grid.forEach(row => {
         console.log(row);
@@ -25,12 +25,12 @@ function App() {
 
   return (
     <div>
-      <Grid gridData={gridData}/>
+      <Grid grid_data={grid_data}/>
     </div>
   );
 }
 
-function generateColorPalette(n) {
+function generate_color_palette(n) {
   let palette = [
     '808080', // Gray
     '800000', // Maroon
