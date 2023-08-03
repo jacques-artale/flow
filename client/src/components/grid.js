@@ -8,7 +8,7 @@ function get_neighbours({ grid_data, row, col }) {
   for (const direction of directions) {
     const new_cell = [row + direction[0], col + direction[1]];
     if (new_cell[0] < 0 || new_cell[0] >= grid_data.length || new_cell[1] < 0 || new_cell[1] >= grid_data[0].length) continue;
-    
+
     if (grid_data[new_cell[0]][new_cell[1]].color === grid_data[row][col].color) {
       if (direction[0] === -1 && direction[1] === 0) neighbors.push(1);
       if (direction[0] === 1 && direction[1] === 0) neighbors.push(2);
@@ -51,16 +51,16 @@ function Path({ grid_data, row, col, color }) {
     left: {
       position: 'absolute',
       top: '50%',
-      left: '0',
-      width: '60%',
+      left: '-10%',
+      width: '70%',
       height: '10px',
       transform: 'translateY(-50%)',
     },
     top: {
       position: 'absolute',
-      top: '0',
+      top: '-10%',
       left: '50%',
-      height: '60%',
+      height: '70%',
       width: '10px',
       transform: 'translateX(-50%)',
     },
@@ -68,7 +68,7 @@ function Path({ grid_data, row, col, color }) {
       position: 'absolute',
       top: '50%',
       left: '40%',
-      width: '60%',
+      width: '70%',
       height: '10px',
       transform: 'translateY(-50%)',
     },
@@ -76,7 +76,7 @@ function Path({ grid_data, row, col, color }) {
       position: 'absolute',
       top: '40%',
       left: '50%',
-      height: '60%',
+      height: '70%',
       width: '10px',
       transform: 'translateX(-50%)',
     },

@@ -12,11 +12,24 @@ interface Cell {
   color: number;
 }
 
+// GENERATOR V5
+// every time we expand a path, we check if we create any holes
+// for each empty cell we check if it is connected to any other
+// empty cells. if it is not, it is a hole
+// use a map  [cell, [top,      right,    bottom,   left    ]]
+//            [cell, [celltype, celltype, celltype, celltype]]
+// if we make a hole we check another direction
+// if we cannot go any other directions we start a new path
+// when we start a new path we start it at the edge
+// this will ensure that we do not create any holes at the start
 
-// TODO: FIX COLOR INCREMENTING MORE THAN IT SHOULD
-// TODO: FIX EMPTY CELLS
+
 // TODO: FIX PATHS NOT BEING AT LEAST 3 CELLS LONG
-// TODO: FIX UNFILLABLE HOLES (WHICH ARE THEN FILLED BY SINGLE CELL PATHS)
+  // TODO: PREVENT BOXING IN OF INVALID PATHS IN CORNERS (CAN WE MERGE MAYBE?)
+  // TODO: FIX UNFILLABLE HOLES (WHICH ARE THEN FILLED BY SINGLE CELL PATHS)
+
+// TODO: USE THE GET ADJACENT CELLS FUNCTION TO SIMPLIFY THE CODE
+// TODO: FIX COLOR INCREMENTING MORE THAN IT SHOULD
 // TODO: MAKE MORE PERFORMANT
 // TODO: ALLOW ARBITRARY GRID SIZES
 
@@ -29,33 +42,47 @@ export class GeneratorV4 {
 
   constructor() {}
 
-  // then check how this works for arbitrary grid sizes, for example 6x9, 1x8 etc. or even 3x3 + 1 (I guess the ring will then be what is furthest away from the middle)
-
+  /**
+   * Works by splitting the grid into rings, extending endpoints from one ring to another and filling them with paths
+   * 
+   * @returns a 2-dimensional array of cells
+   */
   generate(): Cell[][] {
 
-    const width = 10;
-    const height = 10;
+    const width = 98;
+    const height = 98;
 
     // create grid
     let grid: Cell[][] = Array.from({length: height}, () => Array.from({length: width}, () => ({type: 'empty', color: 0})));
 
-
     
-    for (let i = 0; i < width/2 - 1; i++) {
+    // fill grid with paths
+    for (let i = 0; i < width/2; i++) {
       this.fill_ring(grid, i);
       this.extend_ring(grid, i);
     }
-    this.fill_ring(grid, Math.floor(width/2 - 1));
+    this.fill_ring(grid, Math.floor(width/2));
 
+    // merge paths that are too small
+    let tries = 10;
+    let merged;
+    do {
+      merged = this.merge_paths(grid);
+      console.log("merged: " + merged);
+    } while (merged && tries-- > 0);
+
+    let count = 0;
+    grid.forEach((row, r) => row.forEach((cell, c) => {
+      if (this.valid_path(grid, [r, c]) === 1 || this.valid_path(grid, [r, c]) === 2) count++;
+    }));
+
+    console.log("invalid paths: " + count);
 
     // print grid width 1 as paths and 0 as endpoints
-    console.log(grid.map(row => row.map(cell => {
+    /*console.log(grid.map(row => row.map(cell => {
       return cell.color;
     }).join(' ')).join('\n'));
-
-
-    // translate grid to color grid
-    //const color_grid: number[][] = grid.map(row => row.map(cell => cell.color));
+    */
 
     return grid;
   }
@@ -72,7 +99,7 @@ export class GeneratorV4 {
 
     // fill ring with more paths
     while (cells.some(cell => this.get_cell(grid, cell).type === 'empty')) {
-      let path_length = Math.floor(Math.random() * ((cells.length - 1)) / 10) + 1; // pick random length
+      let path_length = Math.floor(Math.random() * ((cells.length - 1) / 2)) + 1; // pick random length
       let cell_index = (Math.floor(Math.random() * cells.length));          // pick random cell
 
 
@@ -108,9 +135,13 @@ export class GeneratorV4 {
   extend_ring(grid: Cell[][], ring: number) {
     // extend endpoints to inner ring
     const cells = this.get_ring_cells(grid, ring);
-    cells.forEach(cell => {
+    cells.forEach((cell, index) => {
       if (this.get_cell(grid, cell).type === 'endpoint') {
-        const expand = Math.floor(Math.random() * 2); // 50% chance to extend endpoint to inner ring
+
+        // we should expand if cell is not yet a valid path or if we randomly choose to
+        const valid_initial_path = this.valid_path(grid, cells[index]);
+        const expand = Math.random() < 0.5 || valid_initial_path < 3;
+        
         if (expand) {
           const inner_cell = this.get_inner_cell(grid, cell, ring);
           if (inner_cell && this.get_cell(grid, inner_cell).type === 'empty') {
@@ -136,7 +167,8 @@ export class GeneratorV4 {
     });
 
     for (const cell_index of remaining_cells) {
-      if (Math.random() < 0.5) continue; // 50% chance to skip this endpoint (to make it more random)
+
+      if (Math.random() < 0.5 ) continue; // 50% chance to skip this endpoint (to make it more random)
 
       const initial_cell = this.get_cell(grid, inner_ring_cells[cell_index]);
 
@@ -181,6 +213,46 @@ export class GeneratorV4 {
 
       }
     }
+  }
+
+  /**
+   * merges paths of length 1 or 2 with neighbouring paths
+   * 
+   * @param grid 2-dimensional array of cells
+   * @returns number of paths that has been merged
+   */
+  merge_paths(grid: Cell[][]): number {
+    let merged = 0;
+
+    for (let row_index = 0; row_index < grid.length; row_index++) {
+      for (let cell_index = 0; cell_index < grid[row_index].length; cell_index++) {
+        const cell = grid[row_index][cell_index];
+
+        if (cell.type !== 'endpoint') continue;
+        const path_length = this.valid_path(grid, [row_index, cell_index]);
+        if (path_length === 3 || path_length === 0) continue;
+
+        const neighbours = this.get_adjacent_cells(grid, [row_index, cell_index]);
+        const endpoints = neighbours.filter((neighbour) => {
+          return this.get_cell(grid, neighbour).type === 'endpoint' && this.get_cell(grid, neighbour).color !== cell.color;
+        });
+
+        for (const endpoint of endpoints) {
+          const neighbour_cell = this.get_cell(grid, [endpoint[0], endpoint[1]]);
+          const neighbour_length = this.valid_path(grid, endpoint);
+          
+          // this cell will now be the new endpoint of the path
+          const n_adjacent = this.get_n_adjacent(grid, [row_index, cell_index], neighbour_cell.color);
+          if (n_adjacent > 1) continue;
+          cell.color = neighbour_cell.color;
+          neighbour_cell.type = neighbour_length === 1 ? 'endpoint' : 'path';
+
+          merged++;
+          break;
+        }
+      }
+    }
+    return merged;
   }
 
   /**
@@ -273,6 +345,72 @@ export class GeneratorV4 {
     }
 
     return n_adjacent;
+  }
+
+  /**
+  * checks if a path is valid
+  * @param grid 2-dimensional array of cells
+  * @param current_cell endpoint cell of path
+  * @returns 3 if path is valid, otherwise it will return the length of the path (1, 2)
+  */
+  valid_path(grid: Cell[][], current_cell: [number, number]): number {
+    if (grid[current_cell[0]][current_cell[1]].type === 'empty') return 0;
+    if (grid[current_cell[0]][current_cell[1]].type !== 'endpoint') return 0;
+
+    const directions = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+    let last_cell: [number, number] | null = null;
+    let path_length = 0;
+  
+    while(current_cell) {
+      path_length++;
+
+      // If current cell is an endpoint, or path is at least 3 cells long, return
+      if (last_cell !== null && (grid[current_cell[0]][current_cell[1]].type === 'endpoint' || path_length >= 3)) {
+        return Math.min(path_length, 3);
+      }
+
+      let next_cell = null;
+      for (const direction of directions) {
+        const new_cell: [number, number] = [current_cell[0] + direction[0], current_cell[1] + direction[1]];
+
+        // Check if new cell is within grid, is not the last cell we visited, and is part of the path
+        if (new_cell[0] < 0 || new_cell[0] >= grid.length || new_cell[1] < 0 || new_cell[1] >= grid[0].length) continue;
+        if (last_cell !== null && (new_cell[0] === last_cell[0] && new_cell[1] === last_cell[1])) continue;
+        if (grid[new_cell[0]][new_cell[1]].color !== grid[current_cell[0]][current_cell[1]].color) continue;
+
+        next_cell = new_cell;
+        break;
+      }
+
+      if (next_cell) {
+        last_cell = current_cell;
+        current_cell = next_cell;
+      } else {
+        break;
+      }
+    }
+
+    return Math.min(path_length, 3);
+  }
+
+  /**
+   * finds and returns all adjecent cells of a cell
+   * 
+   * @param grid 2-dimensional array of cells
+   * @param cell cell to get adjacent cells of
+   * @returns array of adjacent cells
+   */
+  get_adjacent_cells(grid: Cell[][], cell: [number, number]): [number, number][] {
+    const directions: [number, number][] = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+    let adjacent_cells: [number, number][] = [];
+
+    for (const direction of directions) {
+      const adj_cell: [number, number] = [cell[0] + direction[0], cell[1] + direction[1]];
+      if (adj_cell[0] < 0 || adj_cell[0] >= grid.length || adj_cell[1] < 0 || adj_cell[1] >= grid[0].length) continue;
+      adjacent_cells.push(adj_cell);
+    }
+
+    return adjacent_cells;
   }
 
 
