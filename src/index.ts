@@ -11,10 +11,31 @@ const port = 3001;
 
 app.get('/generate', (req, res) => {
 
-  console.log("generating");
-
   const generator = new GeneratorV4();
-  const grid = generator.generate();
+  
+  console.log("Generating...");
+  let grid = generator.generate();
+  let tries = 1;
+  let valid = false;
+
+  while (!valid) {
+    for (let i = 0; i < grid.length; i++) {
+      for (let j = 0; j < grid[i].length; j++) {
+        if (generator.valid_path(grid, [i, j]) > 2) {
+          valid = true;
+          break;
+        } else {
+          console.log("Invalid grid, trying again...");
+          tries++;
+          grid = generator.generate();
+          break;
+        }
+      }
+      if (valid) break;
+    }
+  }
+
+  console.log("Generated: " + tries + " tries");
 
   res.json({
     grid: grid

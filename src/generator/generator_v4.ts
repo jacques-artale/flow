@@ -48,9 +48,8 @@ export class GeneratorV4 {
    * @returns a 2-dimensional array of cells
    */
   generate(): Cell[][] {
-
-    const width = 98;
-    const height = 98;
+    const width = 100;
+    const height = 50;
 
     // create grid
     let grid: Cell[][] = Array.from({length: height}, () => Array.from({length: width}, () => ({type: 'empty', color: 0})));
@@ -70,13 +69,6 @@ export class GeneratorV4 {
       merged = this.merge_paths(grid);
       console.log("merged: " + merged);
     } while (merged && tries-- > 0);
-
-    let count = 0;
-    grid.forEach((row, r) => row.forEach((cell, c) => {
-      if (this.valid_path(grid, [r, c]) === 1 || this.valid_path(grid, [r, c]) === 2) count++;
-    }));
-
-    console.log("invalid paths: " + count);
 
     // print grid width 1 as paths and 0 as endpoints
     /*console.log(grid.map(row => row.map(cell => {
