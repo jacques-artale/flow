@@ -10,11 +10,14 @@ const app = express();
 const port = 3001;
 
 app.get('/generate', (req, res) => {
+  const width = Number(req.query.width);
+  const height = Number(req.query.height);
 
   const generator = new GeneratorV4();
   
-  console.log("Generating...");
-  let grid = generator.generate();
+  console.log("Generating - width: " + width + ", height: " + height);
+
+  let grid = generator.generate(width, height);
   let tries = 1;
   let valid = false;
 
@@ -25,9 +28,8 @@ app.get('/generate', (req, res) => {
           valid = true;
           break;
         } else {
-          console.log("Invalid grid, trying again...");
           tries++;
-          grid = generator.generate();
+          grid = generator.generate(width, height);
           break;
         }
       }

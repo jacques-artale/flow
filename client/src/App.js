@@ -1,13 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import Grid from './components/grid';
 
 function App() {
 
   const [grid_data, set_grid_data] = useState([[]]);
+  const [width, set_width] = useState(10);
+  const [height, set_height] = useState(10);
 
-  useEffect(() => {
-    fetch('/generate').then(res => res.json()).then(data => {
+  function generate_grid() {
+    const params = new URLSearchParams({
+      width: width,
+      height: height,
+    });
+
+    fetch(`/generate?${params.toString()}`).then(res => res.json()).then(data => {
       const color_map = generate_color_palette(data.grid.length * data.grid[0].length + 1);
       const colored_grid = data.grid.map(row => row.map(cell => {
         return {
@@ -16,16 +23,24 @@ function App() {
         }
       }));
       set_grid_data(colored_grid);
-
-      data.grid.forEach(row => {
-        console.log(row);
-      });
     });
-  }, []);
+  }
 
   return (
     <div>
-      <Grid grid_data={grid_data}/>
+      <h1>Flow Numberlink</h1>
+      
+      <div style={{display: 'flex'}}>
+        <div style={style.settings_container}>
+          Width: <input style={style.input_field} type="number" value={width} onChange={(event) => set_width(event.target.value)}></input>
+          Height: <input style={style.input_field} type="number" value={height} onChange={(event) => set_height(event.target.value)}></input>
+          <button style={style.generate_button} onClick={generate_grid}>Generate new board</button>
+        </div>
+        
+        <div style={style.grid_container}>
+          <Grid grid_data={grid_data}/>
+        </div>
+      </div>
     </div>
   );
 }
@@ -92,6 +107,40 @@ function generate_color_palette(n) {
   
   return palette;
 }
+
+const style = {
+  input_field: {
+    width: '60px',
+    padding: '8px 12px',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    marginLeft: '5%',
+  },
+
+  settings_container: {
+    border: '1px solid black',
+    marginLeft: '1%',
+    width: '20%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'left',
+  },
+
+  grid_container: {
+    marginLeft: '1%',
+    border: '1px solid black',
+  },
+
+  generate_button: {
+    padding: '8px 12px',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+    marginLeft: '5%',
+    marginRight: '5%',
+    marginTop: '5%',
+    marginBottom: '5%',
+  }
+};
 
 
 export default App;
