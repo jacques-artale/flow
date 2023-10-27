@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 import './App.css';
 import Grid from './components/grid';
+import Puzzle from './components/puzzle';
+import color_palette from './colors';
+
+const INITIAL_WIDTH = 10;
+const INITIAL_HEIGHT = 10;
 
 function App() {
 
   const [grid_data, set_grid_data] = useState([[]]);
-  const [width, set_width] = useState(10);
-  const [height, set_height] = useState(10);
+  const [width, set_width] = useState(INITIAL_WIDTH);
+  const [height, set_height] = useState(INITIAL_HEIGHT);
 
   function generate_grid() {
     const params = new URLSearchParams({
@@ -15,7 +20,7 @@ function App() {
     });
 
     fetch(`/generate?${params.toString()}`).then(res => res.json()).then(data => {
-      const color_map = generate_color_palette(data.grid.length * data.grid[0].length + 1);
+      const color_map = color_palette;
       const colored_grid = data.grid.map(row => row.map(cell => {
         return {
           ...cell,
@@ -32,6 +37,7 @@ function App() {
       
       <div style={{display: 'flex'}}>
         <div style={style.settings_container}>
+          <h2>Generation</h2>
           Width: <input style={style.input_field} type="number" value={width} onChange={(event) => set_width(event.target.value)}></input>
           Height: <input style={style.input_field} type="number" value={height} onChange={(event) => set_height(event.target.value)}></input>
           <button style={style.generate_button} onClick={generate_grid}>Generate new board</button>
@@ -40,72 +46,22 @@ function App() {
         <div style={style.grid_container}>
           <Grid grid_data={grid_data}/>
         </div>
+
+        <div style={style.grid_container}>
+          <Puzzle grid_data={grid_data}/>
+        </div>
+
+        <div style={style.info_container}>
+          <h2>Rules</h2>
+          <ol style={style.list}>
+            <li>Connect each pair of dots with a path</li>
+            <li>A path may not cross another path</li>
+            <li>The grid must be fully filled in the end</li>
+          </ol>
+        </div>
       </div>
     </div>
   );
-}
-
-function generate_color_palette(n) {
-  let palette = [
-    '808080', // Gray
-    '800000', // Maroon
-    '808000', // Olive
-    '00FFFF', // Aqua
-    '008080', // Teal
-    '000080', // Navy
-    'FF00FF', // Fuchsia
-    '800080', // Purple
-    'FA8072', // Salmon
-    'FFD700', // Gold
-    'BDB76B', // Dark Khaki
-    'ADD8E6', // Light Blue
-    '87CEFA', // Light Sky Blue
-    '6495ED', // Cornflower Blue
-    '4682B4', // Steel Blue
-    'D2B48C', // Tan
-    'BC8F8F', // Rosy Brown
-    'F4A460', // Sandy Brown
-    '8B4513', // Saddle Brown
-    '90EE90', // Light Green
-    '32CD32', // Lime Green
-    '6B8E23', // Olive Drab
-    '556B2F', // Dark Olive Green
-    'FAFAD2', // Light Goldenrod Yellow
-    'EEE8AA', // Pale Goldenrod
-    'B8860B', // Dark Goldenrod
-    'FF6347', // Tomato
-    'FF4500', // Orange Red
-    'D2691E', // Chocolate
-    'CD853F', // Peru
-    'FF7F50', // Coral
-    'F08080', // Light Coral
-    'DC143C', // Crimson
-    'B22222', // FireBrick
-    '8B0000', // Dark Red
-    'FFA07A', // Light Salmon
-    'FF8C00', // Dark Orange
-    'FFA500', // Orange
-    'FFFF00', // Yellow
-    'ADFF2F', // Green Yellow
-    '7FFF00', // Chartreuse
-    '7CFC00', // Lawn Green
-    '00FF00', // Lime
-    '32CD32', // Lime Green
-    '00FA9A', // Medium Spring Green
-    '3CB371', // Medium Sea Green
-    '2E8B57', // Sea Green
-    '228B22', // Forest Green
-    '006400', // Dark Green
-    '98FB98', // Pale Green
-  ];
-  /*
-  for(let i = 0; i < n; i++) {
-    const randomColor = Math.floor(Math.random()*16777215).toString(16);
-    palette.push(randomColor);
-  }
-  */
-  
-  return palette;
 }
 
 const style = {
@@ -118,17 +74,30 @@ const style = {
   },
 
   settings_container: {
-    border: '1px solid black',
+    borderRadius: '4px',
     marginLeft: '1%',
+    paddingLeft: '0.5%',
+    paddingRight: '0.5%',
     width: '20%',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'left',
+    backgroundColor: '#f2f2f2',
   },
 
   grid_container: {
     marginLeft: '1%',
-    border: '1px solid black',
+    border: '3px solid black',
+    backgroundColor: '#f2f2f2',
+  },
+
+  info_container: {
+    marginLeft: '1%',
+    borderRadius: '4px',
+    width: '20%',
+    backgroundColor: '#f2f2f2',
+    paddingLeft: '0.5%',
+    paddingRight: '0.5%'
   },
 
   generate_button: {
@@ -139,6 +108,11 @@ const style = {
     marginRight: '5%',
     marginTop: '5%',
     marginBottom: '5%',
+    backgroundColor: '#4CAF50',
+  },
+
+  list: {
+    fontSize: '18px',
   }
 };
 

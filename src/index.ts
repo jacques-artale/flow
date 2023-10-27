@@ -5,6 +5,7 @@ import { Generator } from './generator/generator';
 import { GeneratorV2 } from './generator/generator_v2';
 import { GeneratorV3 } from './generator/generator_v3';
 import { GeneratorV4 } from './generator/generator_v4';
+import { GeneratorV5 } from './generator/generator_v5';
 
 const app = express();
 const port = 3001;
@@ -36,6 +37,7 @@ app.get('/generate', (req, res) => {
       if (valid) break;
     }
   }
+
 
   console.log("Generated: " + tries + " tries");
 

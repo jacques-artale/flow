@@ -157,7 +157,7 @@ export class GeneratorV4 {
 
     for (const cell_index of remaining_cells) {
 
-      if (Math.random() < 0.5 ) continue; // 50% chance to skip this endpoint (to make it more random)
+      if (Math.random() < 0.05 ) continue; // 5% chance to skip this endpoint (to make it more random)
 
       const initial_cell = this.get_cell(grid, inner_ring_cells[cell_index]);
 
