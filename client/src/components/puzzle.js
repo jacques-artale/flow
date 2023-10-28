@@ -1,30 +1,43 @@
-import React from 'react';
-import { useState } from 'react';
-
+import React, { useEffect, useState } from 'react';
 import Cell from './grid_components/cell';
-
 
 function Puzzle({ grid_data }) {
 
+  const [current_grid, set_current_grid] = useState([[]]);
   const [active_color, set_active_color] = useState();
 
-  function choose_color(color) {
-    set_active_color(color);
-    console.log("chose endpoint: " + active_color);
+  useEffect(() => {
+    // wipe out all paths, leaving only endpoints
+    const endpoint_grid = grid_data.map(row => row.map(cell => {
+      return cell.type === 'path' ? { ...cell, type: 'empty', color: '' } : cell;
+    }));
+    set_current_grid(endpoint_grid);
+  }, [grid_data]);
+
+  function choose_color(cell) {
+    if (cell.type === 'endpoint') set_active_color(cell.color);
   }
   
   function release_color() {
-    console.log("released endpoint: " + active_color);
-    set_active_color();
+    set_active_color(null);
   }
 
-  function add_to_path() {
-    console.log("added to path: " + active_color);
+  function add_to_path(row_index, col_index) {
+    if (active_color === null) return;
+
+    set_current_grid(prev_grid => {
+      const new_grid = JSON.parse(JSON.stringify(prev_grid));  // Deep copy
+      if (new_grid[row_index][col_index].type !== 'endpoint') {
+        new_grid[row_index][col_index].color = active_color;
+        new_grid[row_index][col_index].type = 'path';
+      }
+      return new_grid;
+    });
   }
 
   return (
     <div onMouseUp={() => release_color()}>
-      {grid_data.map((row, row_index) =>
+      {current_grid.map((row, row_index) =>
         <div 
           key={`row-${row_index}`} 
           style={{ display: 'flex' }}
@@ -36,13 +49,12 @@ function Puzzle({ grid_data }) {
             >
               
               {
-                cell.type === 'endpoint' ?
-                <div onMouseDown={() => choose_color(cell.color)}>
-                  <Cell grid_data={grid_data} cell={cell} row={row_index} col={col_index} color={cell.color} />
-                </div>
-                :
-                <div onMouseEnter={() => add_to_path()} style={{width: '100%', height: '100%'}}>
-                  
+                <div
+                  style={{width: '100%', height: '100%'}}
+                  onMouseDown={() => choose_color(cell)}
+                  onMouseEnter={() => add_to_path(row_index, col_index)}
+                >
+                  <Cell grid_data={current_grid} cell={cell} row={row_index} col={col_index} color={cell.color} />
                 </div>
               }
               
