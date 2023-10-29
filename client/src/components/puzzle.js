@@ -48,15 +48,14 @@ function Puzzle({ grid_data }) {
               style={{ width: '52px', height: '52px', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid gray' }}
             >
               
-              {
-                <div
-                  style={{width: '100%', height: '100%'}}
-                  onMouseDown={() => choose_color(cell)}
-                  onMouseEnter={() => add_to_path(row_index, col_index)}
-                >
-                  <Cell grid_data={current_grid} cell={cell} row={row_index} col={col_index} color={cell.color} />
-                </div>
-              }
+              <div
+                style={{width: '100%', height: '100%'}}
+                onDragStart={(event) => event.preventDefault()}
+                onMouseDown={() => choose_color(cell)}
+                onMouseEnter={() => add_to_path(row_index, col_index)}
+              >
+                <Cell grid_data={current_grid} cell={cell} row={row_index} col={col_index} color={cell.color} />
+              </div>
               
             </div>
           )}
