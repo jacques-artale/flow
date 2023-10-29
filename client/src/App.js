@@ -3,15 +3,19 @@ import './App.css';
 import Grid from './components/grid';
 import Puzzle from './components/puzzle';
 import color_palette from './colors';
+import get_style from './style/style';
 
 const INITIAL_WIDTH = 10;
 const INITIAL_HEIGHT = 10;
 
 function App() {
 
+  const [theme, set_theme] = useState('light');  // ['light', 'dark']
   const [grid_data, set_grid_data] = useState([[]]);
   const [width, set_width] = useState(INITIAL_WIDTH);
   const [height, set_height] = useState(INITIAL_HEIGHT);
+
+  const style = get_style(theme);
 
   function generate_grid() {
     const params = new URLSearchParams({
@@ -33,8 +37,10 @@ function App() {
   }
 
   return (
-    <div>
+    <div style={style.main}>
       <h1>Flow Numberlink</h1>
+
+      <button style={style.button} onClick={() => set_theme(theme === 'light' ? 'dark' : 'light')}>Toggle Theme</button>
       
       <div style={{display: 'flex'}}>
         <div style={style.settings_container}>
@@ -64,58 +70,6 @@ function App() {
     </div>
   );
 }
-
-const style = {
-  input_field: {
-    width: '60px',
-    padding: '8px 12px',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    marginLeft: '5%',
-  },
-
-  settings_container: {
-    borderRadius: '4px',
-    marginLeft: '1%',
-    paddingLeft: '0.5%',
-    paddingRight: '0.5%',
-    width: '20%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'left',
-    backgroundColor: '#f2f2f2',
-  },
-
-  grid_container: {
-    marginLeft: '1%',
-    border: '3px solid black',
-    backgroundColor: '#f2f2f2',
-  },
-
-  info_container: {
-    marginLeft: '1%',
-    borderRadius: '4px',
-    width: '20%',
-    backgroundColor: '#f2f2f2',
-    paddingLeft: '0.5%',
-    paddingRight: '0.5%'
-  },
-
-  generate_button: {
-    padding: '8px 12px',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
-    marginLeft: '5%',
-    marginRight: '5%',
-    marginTop: '5%',
-    marginBottom: '5%',
-    backgroundColor: '#4CAF50',
-  },
-
-  list: {
-    fontSize: '18px',
-  }
-};
 
 
 export default App;
