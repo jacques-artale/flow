@@ -10,7 +10,7 @@ const INITIAL_HEIGHT = 10;
 
 function App() {
 
-  const [theme, set_theme] = useState('light');  // ['light', 'dark']
+  const [theme, set_theme] = useState('dark');  // ['light', 'dark']
   const [grid_data, set_grid_data] = useState([[]]);
   const [width, set_width] = useState(INITIAL_WIDTH);
   const [height, set_height] = useState(INITIAL_HEIGHT);

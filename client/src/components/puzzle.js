@@ -15,7 +15,7 @@ function Puzzle({ grid_data }) {
   }, [grid_data]);
 
   function choose_color(cell) {
-    if (cell.type === 'endpoint') set_active_color(cell.color);
+    if (cell.type !== 'empty') set_active_color(cell.color);
   }
   
   function release_color() {
@@ -26,7 +26,11 @@ function Puzzle({ grid_data }) {
     if (active_color === null) return;
 
     set_current_grid(prev_grid => {
-      const new_grid = JSON.parse(JSON.stringify(prev_grid));  // Deep copy
+      // Targeted deep copy for optimization
+      const new_grid = [...prev_grid];
+      new_grid[row_index] = [...new_grid[row_index]];
+      new_grid[row_index][col_index] = { ...new_grid[row_index][col_index] };
+
       if (new_grid[row_index][col_index].type !== 'endpoint') {
         new_grid[row_index][col_index].color = active_color;
         new_grid[row_index][col_index].type = 'path';

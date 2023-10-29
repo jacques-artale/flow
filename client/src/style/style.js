@@ -5,7 +5,7 @@ const get_style = (theme) => ({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: `${theme === 'light' ? '#f2f2f2' : '#2C2F33'}`,
+    backgroundColor: `${theme === 'light' ? '#f2f2f2' : '#1a1a1a'}`,
     color: `${theme === 'light' ? 'black' : 'white'}`,
   },
 
@@ -28,7 +28,7 @@ const get_style = (theme) => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'left',
-    backgroundColor: theme === 'light' ? '#e0e0e0' : '#333',  // Conditional background color
+    backgroundColor: theme === 'light' ? '#e0e0e0' : '#282828',  // Conditional background color
     color: theme === 'light' ? 'black' : 'white',  // Conditional text color
   },
 
@@ -40,7 +40,7 @@ const get_style = (theme) => ({
   info_container: {
     marginLeft: '1%',
     borderRadius: '4px',
-    backgroundColor: theme === 'light' ? '#e0e0e0' : '#333',
+    backgroundColor: theme === 'light' ? '#e0e0e0' : '#282828',
     paddingLeft: '0.5%',
     paddingRight: '0.5%',
     color: theme === 'light' ? 'black' : 'white',
