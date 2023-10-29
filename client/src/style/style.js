@@ -68,7 +68,7 @@ const get_style = (theme) => ({
   },
 
   list: {
-    fontSize: '18px',
+    fontSize: '17px',
     color: theme === 'light' ? 'black' : 'white',
   }
 });

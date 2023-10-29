@@ -1,6 +1,7 @@
 import express from 'express';
 
 import { Solver } from './solver/solver';
+import Validate from './validator/validator';
 import { Generator } from './generator/generator';
 import { GeneratorV2 } from './generator/generator_v2';
 import { GeneratorV3 } from './generator/generator_v3';
@@ -18,26 +19,15 @@ app.get('/generate', (req, res) => {
   
   console.log("Generating - width: " + width + ", height: " + height);
 
-  let grid = generator.generate(width, height);
-  let tries = 1;
-  let valid = false;
-
-  while (!valid) {
-    for (let i = 0; i < grid.length; i++) {
-      for (let j = 0; j < grid[i].length; j++) {
-        if (generator.valid_path(grid, [i, j]) > 2) {
-          valid = true;
-          break;
-        } else {
-          tries++;
-          grid = generator.generate(width, height);
-          break;
-        }
-      }
-      if (valid) break;
-    }
-  }
-
+  let tries = 0;
+  let grid;
+  let valid;
+  
+  do {
+    tries++;
+    grid = generator.generate(width, height);
+    valid = Validate(grid);
+  } while (!valid);
 
   console.log("Generated: " + tries + " tries");
 
