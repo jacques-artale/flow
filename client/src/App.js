@@ -40,7 +40,7 @@ function App() {
 
   return (
     <div style={style.main}>
-      <h1>Flow Numberlink</h1>
+      <h1 style={{marginTop: 0}}>Flow Numberlink</h1>
 
       <button style={style.button} onClick={() => set_theme(theme === 'light' ? 'dark' : 'light')}>Toggle Theme</button>
       <button style={style.button} onClick={() => set_show_solution(!show_solution)}>{show_solution ? 'Hide Solution' : 'Show Solution'}</button>

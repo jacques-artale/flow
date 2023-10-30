@@ -1,10 +1,5 @@
 const get_style = (theme) => ({
   main: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
     backgroundColor: `${theme === 'light' ? '#f2f2f2' : '#1a1a1a'}`,
     color: `${theme === 'light' ? 'black' : 'white'}`,
   },
