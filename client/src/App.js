@@ -11,6 +11,8 @@ const INITIAL_HEIGHT = 10;
 function App() {
 
   const [theme, set_theme] = useState('dark');  // ['light', 'dark']
+  const [show_solution, set_show_solution] = useState(false);
+
   const [grid_data, set_grid_data] = useState([[]]);
   const [width, set_width] = useState(INITIAL_WIDTH);
   const [height, set_height] = useState(INITIAL_HEIGHT);
@@ -41,6 +43,7 @@ function App() {
       <h1>Flow Numberlink</h1>
 
       <button style={style.button} onClick={() => set_theme(theme === 'light' ? 'dark' : 'light')}>Toggle Theme</button>
+      <button style={style.button} onClick={() => set_show_solution(!show_solution)}>{show_solution ? 'Show Solution' : 'Hide Solution'}</button>
       
       <div style={{display: 'flex'}}>
         <div style={style.settings_container}>
@@ -50,11 +53,10 @@ function App() {
           <button style={style.generate_button} onClick={generate_grid}>Generate new board</button>
         </div>
         
-        <div style={style.grid_container}>
+        <div style={{...style.grid_container, display: show_solution ? 'none' : ''}}>
           <Grid grid_data={grid_data}/>
         </div>
-
-        <div style={style.grid_container}>
+        <div style={{...style.grid_container, display: show_solution ? '' : 'none'}}>
           <Puzzle grid_data={grid_data}/>
         </div>
 
