@@ -9,7 +9,7 @@ function get_neighbours({ grid_data, row, col }) {
     const new_cell = [row + direction[0], col + direction[1]];
     if (new_cell[0] < 0 || new_cell[0] >= grid_data.length || new_cell[1] < 0 || new_cell[1] >= grid_data[0].length) continue;
 
-    if (grid_data[new_cell[0]][new_cell[1]].color === grid_data[row][col].color) {
+    if (grid_data[new_cell[0]][new_cell[1]].id === grid_data[row][col].id) {
       if (direction[0] === -1 && direction[1] === 0) neighbors.push(1);
       if (direction[0] === 1 && direction[1] === 0) neighbors.push(2);
       if (direction[0] === 0 && direction[1] === -1) neighbors.push(3);

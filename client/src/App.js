@@ -26,12 +26,12 @@ function App() {
     });
 
     fetch(`/generate?${params.toString()}`).then(res => res.json()).then(data => {
-      console.log(data.grid);
       const color_map = color_palette;
       const colored_grid = data.grid.map(row => row.map(cell => {
         return {
           ...cell,
-          color: cell.color === 0 ? 'FFFFFF' : color_map[cell.color % color_map.length]
+          color: cell.color === 0 ? 'FFFFFF' : color_map[cell.color % color_map.length],
+          id: cell.color,
         }
       }));
       set_grid_data(colored_grid);
