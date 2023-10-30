@@ -43,7 +43,7 @@ function App() {
       <h1>Flow Numberlink</h1>
 
       <button style={style.button} onClick={() => set_theme(theme === 'light' ? 'dark' : 'light')}>Toggle Theme</button>
-      <button style={style.button} onClick={() => set_show_solution(!show_solution)}>{show_solution ? 'Show Solution' : 'Hide Solution'}</button>
+      <button style={style.button} onClick={() => set_show_solution(!show_solution)}>{show_solution ? 'Hide Solution' : 'Show Solution'}</button>
       
       <div style={{display: 'flex'}}>
         <div style={style.settings_container}>
@@ -53,10 +53,10 @@ function App() {
           <button style={style.generate_button} onClick={generate_grid}>Generate new board</button>
         </div>
         
-        <div style={{...style.grid_container, display: show_solution ? 'none' : ''}}>
+        <div style={{...style.grid_container, display: show_solution ? '' : 'none'}}>
           <Grid grid_data={grid_data}/>
         </div>
-        <div style={{...style.grid_container, display: show_solution ? '' : 'none'}}>
+        <div style={{...style.grid_container, display: show_solution ? 'none' : ''}}>
           <Puzzle grid_data={grid_data}/>
         </div>
 

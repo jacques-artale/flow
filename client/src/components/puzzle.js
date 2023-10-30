@@ -14,6 +14,16 @@ function Puzzle({ grid_data }) {
     set_current_grid(endpoint_grid);
   }, [grid_data]);
 
+  useEffect(() => {
+    // Attach mouseup event listener to window
+    window.addEventListener('mouseup', release_color);
+
+    // Clean up - remove the event listener
+    return () => {
+      window.removeEventListener('mouseup', release_color);
+    };
+  }, []);
+
   function choose_color(cell) {
     if (cell.type !== 'empty') set_active_color(cell.color);
   }
@@ -40,7 +50,7 @@ function Puzzle({ grid_data }) {
   }
 
   return (
-    <div onMouseUp={() => release_color()}>
+    <div>
       {current_grid.map((row, row_index) =>
         <div 
           key={`row-${row_index}`} 
@@ -53,7 +63,7 @@ function Puzzle({ grid_data }) {
             >
               
               <div
-                style={{width: '100%', height: '100%'}}
+                style={{width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', display: 'flex'}}
                 onDragStart={(event) => event.preventDefault()}
                 onMouseDown={() => choose_color(cell)}
                 onMouseEnter={() => add_to_path(row_index, col_index)}
