@@ -51,35 +51,48 @@ function Path({ grid_data, row, col, color }) {
     left: {
       position: 'absolute',
       top: '50%',
-      left: '-10%',
-      width: '70%',
+      left: '-20%',
+      width: '80%',
       height: '10px',
+      borderRadius: '5px',
       transform: 'translateY(-50%)',
     },
     top: {
       position: 'absolute',
-      top: '-10%',
+      top: '-20%',
       left: '50%',
-      height: '70%',
+      height: '80%',
       width: '10px',
+      borderRadius: '5px',
       transform: 'translateX(-50%)',
     },
     right: {
       position: 'absolute',
       top: '50%',
       left: '40%',
-      width: '70%',
+      width: '80%',
       height: '10px',
+      borderRadius: '5px',
       transform: 'translateY(-50%)',
     },
     bottom: {
       position: 'absolute',
       top: '40%',
       left: '50%',
-      height: '70%',
+      height: '80%',
       width: '10px',
+      borderRadius: '5px',
       transform: 'translateX(-50%)',
     },
+    circle: {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      width: '20px',
+      height: '20px',
+      borderRadius: '50%',
+      transform: 'translate(-50%, -50%)',
+    }
   };
 
   const neighbours = get_neighbours({ grid_data, row, col });
@@ -90,6 +103,7 @@ function Path({ grid_data, row, col, color }) {
       { neighbours.includes(2) && <div style={{...style.bottom, backgroundColor: `#${color}`}} /> }
       { neighbours.includes(3) && <div style={{...style.left, backgroundColor: `#${color}`}} /> }
       { neighbours.includes(4) && <div style={{...style.right, backgroundColor: `#${color}`}} /> }
+      { neighbours.length === 1 && <div style={{...style.circle, backgroundColor: `#${color}`}} /> }
     </div>
   );
 }
