@@ -5,27 +5,49 @@ function Puzzle({ grid_data }) {
 
   const [current_grid, set_current_grid] = useState([[]]);
   const [active_endpoint, set_active_endpoint] = useState();
+  const [solved, set_solved] = useState(false);
 
   const directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
 
+  // Check if the puzzle has been solved when the current grid changes
   useEffect(() => {
-    // wipe out all paths, leaving only endpoints
+    if (current_grid.length === 0 || current_grid[0].length === 0) return;
+    for (let i = 0; i < current_grid.length; i++) {
+      for (let j = 0; j < current_grid[0].length; j++) {
+        const cell = current_grid[i][j];
+        const target_cell = grid_data[i][j];
+
+        if (cell.type !== target_cell.type || cell.color !== target_cell.color || cell.id !== target_cell.id) {
+          return;
+        }
+      }
+    }
+    set_solved(true);
+  }, [current_grid]);
+
+  // Reset the puzzle when the grid data changes
+  useEffect(() => {
     const endpoint_grid = grid_data.map(row => row.map(cell => {
       return cell.type === 'path' ? { ...cell, type: 'empty', color: '', id: '' } : cell;
     }));
     set_current_grid(endpoint_grid);
+    set_solved(false);
   }, [grid_data]);
 
   useEffect(() => {
     // Attach mouseup event listener to window
     window.addEventListener('mouseup', release_color);
-
     // Clean up - remove the event listener
     return () => {
       window.removeEventListener('mouseup', release_color);
     };
   }, []);
 
+  /**
+   * Sets the cell which was clicked on as the active endpoint
+   * @param {number} row_index 
+   * @param {number} col_index 
+   */
   function choose_color(row_index, col_index) {
     const cell = current_grid[row_index][col_index];
     if (cell.type !== 'empty') set_active_endpoint(cell);
@@ -108,6 +130,26 @@ function Puzzle({ grid_data }) {
     set_current_grid(new_grid);
   }
 
+  const style = {
+    solved_overlay: {
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)', // Center the div
+      width: '30%',
+      height: '30%',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      background: 'rgba(0, 0, 0, 0.35)',
+      backdropFilter: 'blur(10px)',
+      color: 'white',
+      fontSize: '24px',
+      borderRadius: '10px',
+      zIndex: 1000
+    }
+  };
+
   return (
     <div>
       {current_grid.map((row, row_index) =>
@@ -134,6 +176,11 @@ function Puzzle({ grid_data }) {
           )}
         </div>
       )}
+
+      <div style={{...style.solved_overlay, display: solved ? 'flex' : 'none'}}>
+        <h2>Puzzle Solved</h2>
+      </div>
+
     </div>
   );
 }
