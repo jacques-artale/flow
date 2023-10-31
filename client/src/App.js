@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import Grid from './components/grid';
-import Puzzle from './components/puzzle';
 import color_palette from './colors';
 import get_style from './style/style';
+import Grid from './components/grid';
+import Puzzle from './components/puzzle';
+import InfoBar from './components/grid_components/info_bar';
 
 const INITIAL_WIDTH = 10;
 const INITIAL_HEIGHT = 10;
@@ -78,9 +79,11 @@ function App() {
         </div>
         
         <div style={{...style.grid_container, display: show_solution ? '' : 'none'}}>
+          <InfoBar solve_time={solve_time}/>
           <Grid grid_data={grid_data}/>
         </div>
         <div style={{...style.grid_container, display: show_solution ? 'none' : ''}}>
+          <InfoBar solve_time={solve_time}/>
           <Puzzle grid_data={grid_data} solved={solved} set_solved={set_solved}/>
         </div>
 

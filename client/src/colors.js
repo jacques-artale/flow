@@ -18,8 +18,6 @@ const color_palette = [
   'BC8F8F', // Rosy Brown
   'F4A460', // Sandy Brown
   '8B4513', // Saddle Brown
-  '90EE90', // Light Green
-  '32CD32', // Lime Green
   '6B8E23', // Olive Drab
   '556B2F', // Dark Olive Green
   'FAFAD2', // Light Goldenrod Yellow
@@ -41,7 +39,6 @@ const color_palette = [
   'ADFF2F', // Green Yellow
   '7FFF00', // Chartreuse
   '7CFC00', // Lawn Green
-  '00FF00', // Lime
   '32CD32', // Lime Green
   '00FA9A', // Medium Spring Green
   '3CB371', // Medium Sea Green

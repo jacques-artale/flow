@@ -85,6 +85,12 @@ const get_style = (theme) => ({
     zIndex: 1000,
     display: 'flex',
     flexDirection: 'column',
+  },
+
+  info_bar: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginLeft: '2%',
   }
 });
 
