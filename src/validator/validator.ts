@@ -19,7 +19,7 @@ function Validate(grid: Cell[][]): boolean {
   const visited: boolean[][] = Array.from({ length: grid.length }, () => Array.from({ length: grid[0].length }, () => false));
 
   for (let i = 0; i < grid.length; i++) {
-    for (let j = 0; j < grid[0].length - 1; j++) {
+    for (let j = 0; j < grid[0].length; j++) {
       // Check for empty cells
       if (grid[i][j].type === 'empty') return false;
       // Check for s patterns (adjacent paths)
