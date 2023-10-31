@@ -65,6 +65,26 @@ const get_style = (theme) => ({
   list: {
     fontSize: '17px',
     color: theme === 'light' ? 'black' : 'white',
+  },
+
+  solved_overlay: {
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)', // Center the div
+    width: '30%',
+    height: '30%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    background: 'rgba(0, 0, 0, 0.35)',
+    backdropFilter: 'blur(10px)',
+    color: 'white',
+    fontSize: '24px',
+    borderRadius: '10px',
+    zIndex: 1000,
+    display: 'flex',
+    flexDirection: 'column',
   }
 });
 

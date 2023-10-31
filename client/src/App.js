@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import Grid from './components/grid';
 import Puzzle from './components/puzzle';
@@ -17,7 +17,28 @@ function App() {
   const [width, set_width] = useState(INITIAL_WIDTH);
   const [height, set_height] = useState(INITIAL_HEIGHT);
 
+  const [on_timer, set_on_timer] = useState(false);
+  const [solved, set_solved] = useState(false);
+  const [solve_time, set_solve_time] = useState(0);
+
   const style = get_style(theme);
+
+  // Start the timer when a new puzzle is generated
+  useEffect(() => {
+    let interval;
+  
+    if (!solved && on_timer) {
+      interval = setInterval(() => {
+        set_solve_time((prevTime) => prevTime + 1);
+      }, 1000);
+    } else {
+      clearInterval(interval);
+    }
+  
+    return () => {
+      clearInterval(interval);
+    };
+  }, [on_timer, solved]);
 
   function generate_grid() {
     const params = new URLSearchParams({
@@ -35,6 +56,9 @@ function App() {
         }
       }));
       set_grid_data(colored_grid);
+      set_solved(false);
+      set_on_timer(true);
+      set_solve_time(0);
     });
   }
 
@@ -57,7 +81,7 @@ function App() {
           <Grid grid_data={grid_data}/>
         </div>
         <div style={{...style.grid_container, display: show_solution ? 'none' : ''}}>
-          <Puzzle grid_data={grid_data}/>
+          <Puzzle grid_data={grid_data} solved={solved} set_solved={set_solved}/>
         </div>
 
         <div style={style.info_container}>
@@ -68,6 +92,11 @@ function App() {
             <li>The grid must be fully filled in the end</li>
           </ol>
         </div>
+      </div>
+
+      <div style={{...style.solved_overlay, display: solved ? 'flex' : 'none'}}>
+        <h2>Puzzle Solved</h2>
+        <p>Time: {solve_time} seconds</p>
       </div>
     </div>
   );

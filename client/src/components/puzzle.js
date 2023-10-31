@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Cell from './grid_components/cell';
 
-function Puzzle({ grid_data }) {
+function Puzzle({ grid_data, solved, set_solved }) {
 
   const [current_grid, set_current_grid] = useState([[]]);
   const [active_endpoint, set_active_endpoint] = useState();
-  const [solved, set_solved] = useState(false);
 
   const directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
 
@@ -31,7 +30,6 @@ function Puzzle({ grid_data }) {
       return cell.type === 'path' ? { ...cell, type: 'empty', color: '', id: '' } : cell;
     }));
     set_current_grid(endpoint_grid);
-    set_solved(false);
   }, [grid_data]);
 
   useEffect(() => {
@@ -49,6 +47,7 @@ function Puzzle({ grid_data }) {
    * @param {number} col_index 
    */
   function choose_color(row_index, col_index) {
+    if (solved) return;
     const cell = current_grid[row_index][col_index];
     if (cell.type !== 'empty') set_active_endpoint(cell);
     if (cell.type !== 'empty') clear_path(row_index, col_index);
@@ -67,6 +66,7 @@ function Puzzle({ grid_data }) {
    * @param {number} col_index
    */
   function add_to_path(row_index, col_index) {
+    if (solved) return;
     if (active_endpoint === null) return;
 
     // make sure that new cell is adjacent to a cell of the same path
@@ -130,31 +130,11 @@ function Puzzle({ grid_data }) {
     set_current_grid(new_grid);
   }
 
-  const style = {
-    solved_overlay: {
-      position: 'fixed',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)', // Center the div
-      width: '30%',
-      height: '30%',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      background: 'rgba(0, 0, 0, 0.35)',
-      backdropFilter: 'blur(10px)',
-      color: 'white',
-      fontSize: '24px',
-      borderRadius: '10px',
-      zIndex: 1000
-    }
-  };
-
   return (
     <div>
       {current_grid.map((row, row_index) =>
         <div 
-          key={`row-${row_index}`} 
+          key={`row-${row_index}`}
           style={{ display: 'flex' }}
         >
           {row.map((cell, col_index) => 
@@ -176,10 +156,6 @@ function Puzzle({ grid_data }) {
           )}
         </div>
       )}
-
-      <div style={{...style.solved_overlay, display: solved ? 'flex' : 'none'}}>
-        <h2>Puzzle Solved</h2>
-      </div>
 
     </div>
   );
