@@ -5,6 +5,7 @@ import get_style from './style/style';
 import Grid from './components/grid';
 import Puzzle from './components/puzzle';
 import InfoBar from './components/grid_components/info_bar';
+import SolvedPopup from './components/solved_popup';
 
 const INITIAL_WIDTH = 10;
 const INITIAL_HEIGHT = 10;
@@ -97,10 +98,7 @@ function App() {
         </div>
       </div>
 
-      <div style={{...style.solved_overlay, display: solved ? 'flex' : 'none'}}>
-        <h2>Puzzle Solved</h2>
-        <p>Time: {solve_time} seconds</p>
-      </div>
+      <SolvedPopup solved={solved} solve_time={solve_time}/>
     </div>
   );
 }
