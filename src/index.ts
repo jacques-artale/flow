@@ -27,7 +27,6 @@ app.get('/generate', (req, res) => {
   
   pool.query('SELECT NOW()', (err, res) => {
     console.log(err, res);
-    pool.end();
   });
 
   const width = Number(req.query.width);
