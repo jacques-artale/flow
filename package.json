@@ -6,7 +6,8 @@
   "scripts": {
     "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/index.ts",
     "build": "tsc",
-    "serve": "node dist/index.js"
+    "serve": "node dist/index.js",
+    "models": "node models/puzzle.js"
   },
   "repository": {
     "type": "git",
@@ -19,13 +20,20 @@
   },
   "homepage": "https://github.com/jacques-artale/flow#readme",
   "devDependencies": {
+    "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.17",
+    "@types/pg": "^8.10.7",
+    "@types/sequelize": "^4.28.17",
     "nodemon": "^3.0.1",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.6"
   },
   "dependencies": {
     "@tensorflow/tfjs-node": "^4.8.0",
-    "express": "^4.18.2"
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "pg": "^8.11.3",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.33.0"
   }
 }
