@@ -1,6 +1,7 @@
 import express from 'express';
 import { Pool } from 'pg';
 import dotenv from 'dotenv';
+import path from 'path';
 
 import { Solver } from './solver/solver';
 import Validate from './validator/validator';
@@ -13,7 +14,7 @@ import { GeneratorV5 } from './generator/generator_v5';
 dotenv.config();
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 
 const pool = new Pool({
   user: process.env.PG_USER,
@@ -51,6 +52,12 @@ app.get('/generate', (req, res) => {
   res.json({
     grid: grid
   });
+});
+
+app.use(express.static(path.join(__dirname, '../client/build')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '../client', 'build', 'index.html'));
 });
 
 app.listen(port, () => {
