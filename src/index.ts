@@ -1,3 +1,5 @@
+console.log("this should be the first thing printed");
+
 import express from 'express';
 import { Pool } from 'pg';
 import dotenv from 'dotenv';
