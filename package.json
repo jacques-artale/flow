@@ -11,6 +11,9 @@
     "serve": "node dist/index.js",
     "models": "node models/puzzle.js"
   },
+  "engines": {
+    "node": "18.13.0"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jacques-artale/flow.git"
