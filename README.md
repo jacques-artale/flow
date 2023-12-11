@@ -20,7 +20,7 @@ Generated examples created with this repo:
   </tr>
 </table>
 
-Live demo: https://numberlink-flow-844375fce804.herokuapp.com/
+Live demo (it may be tired, give it a few seconds to wake up): https://numberlink-flow-844375fce804.herokuapp.com/
 
 How to run:
 1. `git clone [repo url]`
