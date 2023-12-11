@@ -20,12 +20,13 @@ Generated examples created with this repo:
   </tr>
 </table>
 
-How to run:
-1. `cd flow`
-2. `npm install`
-3. `npm run start`
+Live demo: https://numberlink-flow-844375fce804.herokuapp.com/
 
-in a second terminal:
-1. `cd flow`
-2. `cd client`
-3. `npm run start`
+How to run:
+1. `git clone [repo url]`
+2. `cd flow && npm install && npm run start`
+3. In a second terminal run: `cd flow/client && npm run start`
+
+Alternatively:
+1. `git clone [repo url]`
+2. `cd flow && npm install && npm run build && npm run start`
