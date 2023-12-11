@@ -11,6 +11,8 @@ import { GeneratorV3 } from './generator/generator_v3';
 import { GeneratorV4 } from './generator/generator_v4';
 import { GeneratorV5 } from './generator/generator_v5';
 
+console.log("hello world: starting up server...");
+
 dotenv.config();
 
 const app = express();
