@@ -19,16 +19,27 @@ function App() {
   const [width, set_width] = useState(INITIAL_WIDTH);
   const [height, set_height] = useState(INITIAL_HEIGHT);
 
+  const [unsolved_grid, set_unsolved_grid] = useState([[]]);
+  const [current_grid, set_current_grid] = useState([[]]);
+
   const [on_timer, set_on_timer] = useState(false);
   const [solved, set_solved] = useState(false);
   const [solve_time, set_solve_time] = useState(0);
 
   const style = get_style(theme);
 
+  // Reset the puzzle when the grid data changes
+  useEffect(() => {
+    const endpoint_grid = grid_data.map(row => row.map(cell => {
+      return cell.type === 'path' ? { ...cell, type: 'empty', color: '', id: '' } : cell;
+    }));
+    set_current_grid(endpoint_grid);
+    set_unsolved_grid(endpoint_grid);
+  }, [grid_data]);
+
   // Start the timer when a new puzzle is generated
   useEffect(() => {
     let interval;
-  
     if (!solved && on_timer) {
       interval = setInterval(() => {
         set_solve_time((prevTime) => prevTime + 1);
@@ -36,11 +47,24 @@ function App() {
     } else {
       clearInterval(interval);
     }
-  
-    return () => {
-      clearInterval(interval);
-    };
+    return () => clearInterval(interval);
   }, [on_timer, solved]);
+
+  // Check if the puzzle has been solved when the current grid changes
+  useEffect(() => {
+    if (current_grid.length === 0 || current_grid[0].length === 0) return;
+    for (let i = 0; i < current_grid.length; i++) {
+      for (let j = 0; j < current_grid[0].length; j++) {
+        const cell = current_grid[i][j];
+        const target_cell = grid_data[i][j];
+
+        if (cell.type !== target_cell.type || cell.color !== target_cell.color || cell.id !== target_cell.id) {
+          return;
+        }
+      }
+    }
+    set_solved(true);
+  }, [current_grid]);
 
   function generate_grid() {
     const params = new URLSearchParams({
@@ -64,12 +88,18 @@ function App() {
     });
   }
 
+  function resetBoard() {
+    set_solved(false);
+    set_current_grid(unsolved_grid);
+  }
+
   return (
     <div style={style.main}>
       <h1 style={{marginTop: 0}}>Flow Numberlink</h1>
 
       <button style={style.button} onClick={() => set_theme(theme === 'light' ? 'dark' : 'light')}>Toggle Theme</button>
       <button style={style.button} onClick={() => set_show_solution(!show_solution)}>{show_solution ? 'Hide Solution' : 'Show Solution'}</button>
+      <button style={style.button} onClick={() => resetBoard()}>Reset Board</button>
       
       <div style={{display: 'flex'}}>
         <div style={style.settings_container}>
@@ -85,7 +115,7 @@ function App() {
         </div>
         <div style={{...style.grid_container, display: show_solution ? 'none' : ''}}>
           <InfoBar solve_time={solve_time}/>
-          <Puzzle grid_data={grid_data} solved={solved} set_solved={set_solved}/>
+          <Puzzle current_grid={current_grid} set_current_grid={set_current_grid} solved={solved} set_solved={set_solved}/>
         </div>
 
         <div style={style.info_container}>

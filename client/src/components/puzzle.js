@@ -1,36 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Cell from './grid_components/cell';
 
-function Puzzle({ grid_data, solved, set_solved }) {
+function Puzzle({ current_grid, set_current_grid, solved, set_solved }) {
 
-  const [current_grid, set_current_grid] = useState([[]]);
   const [active_endpoint, set_active_endpoint] = useState();
 
   const directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
-
-  // Check if the puzzle has been solved when the current grid changes
-  useEffect(() => {
-    if (current_grid.length === 0 || current_grid[0].length === 0) return;
-    for (let i = 0; i < current_grid.length; i++) {
-      for (let j = 0; j < current_grid[0].length; j++) {
-        const cell = current_grid[i][j];
-        const target_cell = grid_data[i][j];
-
-        if (cell.type !== target_cell.type || cell.color !== target_cell.color || cell.id !== target_cell.id) {
-          return;
-        }
-      }
-    }
-    set_solved(true);
-  }, [current_grid]);
-
-  // Reset the puzzle when the grid data changes
-  useEffect(() => {
-    const endpoint_grid = grid_data.map(row => row.map(cell => {
-      return cell.type === 'path' ? { ...cell, type: 'empty', color: '', id: '' } : cell;
-    }));
-    set_current_grid(endpoint_grid);
-  }, [grid_data]);
 
   useEffect(() => {
     // Attach mouseup event listener to window
