@@ -1,6 +1,6 @@
 import get_style from '../../style/style';
 
-function InfoBar({ solve_time }) {
+function InfoBar({ solve_time, moves }) {
 
   function get_time_string() {
     const minutes = Math.floor(solve_time / 60);
@@ -13,7 +13,7 @@ function InfoBar({ solve_time }) {
   return (
     <div style={style.info_bar}>
       <p style={{margin: '2%'}}>Time: {get_time_string()}</p>
-      <p style={{margin: '2%'}}>Moves: 0</p>
+      <p style={{margin: '2%'}}>Moves: {moves}</p>
     </div>
   );
 }

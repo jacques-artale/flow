@@ -62,6 +62,18 @@ const get_style = (theme) => ({
     color: theme === 'light' ? 'white' : 'white',
   },
 
+  disabled_generate_button: {
+    padding: '8px 12px',
+    border: `1px solid ${theme === 'light' ? '#ccc' : '#555'}`,
+    borderRadius: '4px',
+    marginLeft: '5%',
+    marginRight: '5%',
+    marginTop: '5%',
+    marginBottom: '5%',
+    backgroundColor: '#ccc',
+    color: theme === 'light' ? 'white' : 'white',
+  },
+
   list: {
     fontSize: '17px',
     color: theme === 'light' ? 'black' : 'white',

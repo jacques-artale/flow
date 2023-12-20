@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Cell from './grid_components/cell';
 
-function Puzzle({ current_grid, set_current_grid, solved, set_solved }) {
+function Puzzle({ current_grid, set_current_grid, solved, set_moves }) {
 
   const [active_endpoint, set_active_endpoint] = useState();
+  const [added_cells, set_added_cells] = useState([]); // [[row, col]]
 
   const directions = [[0, 1], [1, 0], [0, -1], [-1, 0]];
 
@@ -35,6 +36,10 @@ function Puzzle({ current_grid, set_current_grid, solved, set_solved }) {
     set_active_endpoint(null);
   }
 
+  useEffect(() => {
+    
+  }, [added_cells]);
+
   /**
    * Adds a cell to the path if it is empty will be connected to the path.
    * @param {number} row_index
@@ -63,6 +68,7 @@ function Puzzle({ current_grid, set_current_grid, solved, set_solved }) {
     
       if (new_grid[row_index][col_index].type === 'empty') {
         new_grid[row_index][col_index] = { ...active_endpoint, type: 'path' };
+        set_added_cells(prev_added_cells => [...prev_added_cells, [row_index, col_index]]);
       }
       return new_grid;
     });

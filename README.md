@@ -7,16 +7,16 @@ In order to be classified as a valid puzzle each board must follow a set of rule
 4. A cell may not be adjacent with more than two cells of the same path
 <table>
   <tr>
-    <td><img src="Numberlink_puzzle.png" alt="Unsolved numberlink puzzle" width="300" height="300"/></td>
-    <td><img src="Numberlink_puzzle_solution.png" alt="Solved numberlink puzzle" width="300" height="300"/></td>
+    <td><img src="images/Numberlink_puzzle.png" alt="Unsolved numberlink puzzle" width="300" height="300"/></td>
+    <td><img src="images/Numberlink_puzzle_solution.png" alt="Solved numberlink puzzle" width="300" height="300"/></td>
   </tr>
 </table>
 
 Generated examples created with this repo:
 <table>
   <tr>
-    <td><img src="Generated.png" alt="Solved numberlink puzzle" width="300" height="300"/></td>
-    <td><img src="Generated2.png" alt="Solved numberlink puzzle" width="300" height="300"/></td>
+    <td><img src="images/Generated.png" alt="Solved numberlink puzzle" width="300" height="300"/></td>
+    <td><img src="images/Generated2.png" alt="Solved numberlink puzzle" width="300" height="300"/></td>
   </tr>
 </table>
 

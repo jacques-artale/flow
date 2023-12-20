@@ -25,6 +25,9 @@ function App() {
   const [on_timer, set_on_timer] = useState(false);
   const [solved, set_solved] = useState(false);
   const [solve_time, set_solve_time] = useState(0);
+  const [moves, set_moves] = useState(0);
+
+  const [generating, set_generating] = useState(false);
 
   const style = get_style(theme);
 
@@ -67,6 +70,18 @@ function App() {
   }, [current_grid]);
 
   function generate_grid() {
+    if (generating) return;
+    if (width < 3 || height < 3) {
+      alert('Grid must be at least 3x3');
+      return;
+    }
+    if (width > 200 || height > 200) {
+      alert('Grid can be at most 200x200');
+      return;
+    }
+
+    set_generating(true);
+
     const params = new URLSearchParams({
       width: width,
       height: height,
@@ -85,11 +100,14 @@ function App() {
       set_solved(false);
       set_on_timer(true);
       set_solve_time(0);
+
+      set_generating(false);
     });
   }
 
   function resetBoard() {
     set_solved(false);
+    set_moves(0);
     set_current_grid(unsolved_grid);
   }
 
@@ -104,18 +122,20 @@ function App() {
       <div style={{display: 'flex'}}>
         <div style={style.settings_container}>
           <h2>Generation</h2>
-          Width: <input style={style.input_field} type="number" value={width} onChange={(event) => set_width(event.target.value)}></input>
-          Height: <input style={style.input_field} type="number" value={height} onChange={(event) => set_height(event.target.value)}></input>
-          <button style={style.generate_button} onClick={generate_grid}>Generate new board</button>
+          Width: <input style={style.input_field} type="number" value={width} min="3" max="200" onChange={(event) => set_width(event.target.value)}></input>
+          Height: <input style={style.input_field} type="number" value={height} min="3" max="200" onChange={(event) => set_height(event.target.value)}></input>
+          <button style={generating ? style.disabled_generate_button : style.generate_button} onClick={generate_grid} disabled={generating} >Generate new board</button>
+
+          <p>Not recommended to generate boards larger than 50x50</p>
         </div>
         
         <div style={{...style.grid_container, display: show_solution ? '' : 'none'}}>
-          <InfoBar solve_time={solve_time}/>
+          <InfoBar solve_time={solve_time} moves={moves}/>
           <Grid grid_data={grid_data}/>
         </div>
         <div style={{...style.grid_container, display: show_solution ? 'none' : ''}}>
-          <InfoBar solve_time={solve_time}/>
-          <Puzzle current_grid={current_grid} set_current_grid={set_current_grid} solved={solved} set_solved={set_solved}/>
+          <InfoBar solve_time={solve_time} moves={moves}/>
+          <Puzzle current_grid={current_grid} set_current_grid={set_current_grid} solved={solved} set_moves={set_moves}/>
         </div>
 
         <div style={style.info_container}>

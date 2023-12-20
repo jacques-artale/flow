@@ -1,5 +1,3 @@
-console.log("this should be the first thing printed");
-
 import express from 'express';
 import { Pool } from 'pg';
 import dotenv from 'dotenv';
@@ -12,8 +10,6 @@ import { GeneratorV2 } from './generator/generator_v2';
 import { GeneratorV3 } from './generator/generator_v3';
 import { GeneratorV4 } from './generator/generator_v4';
 import { GeneratorV5 } from './generator/generator_v5';
-
-console.log("hello world: starting up server...");
 
 dotenv.config();
 
@@ -34,8 +30,9 @@ app.get('/generate', (req, res) => {
     console.log(err, res);
   });
 
-  const width = Number(req.query.width);
-  const height = Number(req.query.height);
+  // DO NOT GENERATE BOARD WITH SIZE > 200x200 as it can take too long
+  const width = Math.min(Number(req.query.width), 200);
+  const height = Math.min(Number(req.query.height), 200);
 
   const generator = new GeneratorV4();
   
