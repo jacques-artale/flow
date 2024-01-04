@@ -143,7 +143,14 @@ function App() {
           <ol style={style.list}>
             <li>Connect each pair of dots with a path</li>
             <li>A path may not cross another path</li>
-            <li>The grid must be fully filled in the end</li>
+            <li>The grid must be fully filled with no gaps</li>
+          </ol>
+          <h2>How to play</h2>
+          <ol style={style.list}>
+            <li>Generate a new board</li>
+            <li>Click on a dot and drag the path to its pair</li>
+            <li>To clear a path press on its connecting dot</li>
+            <li>Once the board follows all rules it is solved!</li>
           </ol>
         </div>
       </div>
