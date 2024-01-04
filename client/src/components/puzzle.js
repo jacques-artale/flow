@@ -17,6 +17,10 @@ function Puzzle({ current_grid, set_current_grid, solved, set_moves }) {
     };
   }, []);
 
+  function deepCopyGrid(grid) {
+    return grid.map(row => row.map(cell => ({ ...cell })));
+  }
+
   /**
    * Sets the cell which was clicked on as the active endpoint
    * @param {number} row_index 
@@ -81,7 +85,7 @@ function Puzzle({ current_grid, set_current_grid, solved, set_moves }) {
    */
   function clear_path(row_index, col_index) {
     // breadth first search to find all cells in the path
-    const new_grid = JSON.parse(JSON.stringify(current_grid));
+    const new_grid = deepCopyGrid(current_grid);
     const target_id = new_grid[row_index][col_index].id;
 
     const type = new_grid[row_index][col_index].type;

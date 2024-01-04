@@ -113,13 +113,10 @@ function App() {
   return (
     <div style={style.main}>
       <h1 style={{marginTop: 0}}>Flow Numberlink</h1>
-
-      <button style={style.button} onClick={() => set_show_solution(!show_solution)}>{show_solution ? 'Hide Solution' : 'Show Solution'}</button>
-      <button style={style.button} onClick={() => resetBoard()}>Reset Board</button>
       
       <div style={{display: 'flex'}}>
         <div style={style.settings_container}>
-          <h2>Generation</h2>
+          <h2>Puzzle Generation</h2>
           Width: <input style={style.input_field} type="number" value={width} min="3" max="200" onChange={(event) => set_width(event.target.value)}></input>
           Height: <input style={style.input_field} type="number" value={height} min="3" max="200" onChange={(event) => set_height(event.target.value)}></input>
           <button style={generating ? style.disabled_generate_button : style.generate_button} onClick={generate_grid} disabled={generating} >Generate new board</button>
@@ -127,14 +124,16 @@ function App() {
           <p>Not recommended to generate boards larger than 50x50</p>
         </div>
         
-        <div style={{...style.grid_container, display: show_solution ? '' : 'none'}}>
-          <InfoBar solve_time={solve_time} moves={moves}/>
-          <Grid grid_data={grid_data}/>
+        <div style={style.grid_container}>
+          <InfoBar solve_time={solve_time} moves={moves} show_solution={show_solution} set_show_solution={set_show_solution} resetBoard={resetBoard}/>
+          <div style={{display: show_solution ? '' : 'none'}}>
+            <Grid grid_data={grid_data}/>
+          </div>
+          <div style={{display: show_solution ? 'none' : ''}}>
+            <Puzzle current_grid={current_grid} set_current_grid={set_current_grid} solved={solved} set_moves={set_moves}/>
+          </div>
         </div>
-        <div style={{...style.grid_container, display: show_solution ? 'none' : ''}}>
-          <InfoBar solve_time={solve_time} moves={moves}/>
-          <Puzzle current_grid={current_grid} set_current_grid={set_current_grid} solved={solved} set_moves={set_moves}/>
-        </div>
+        
 
         <div style={style.info_container}>
           <h2>Rules</h2>

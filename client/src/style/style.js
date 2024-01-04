@@ -17,7 +17,7 @@ const get_style = () => ({
   settings_container: {
     borderRadius: '4px',
     marginLeft: '1%',
-    paddingLeft: '0.5%',
+    paddingLeft: '1%',
     paddingRight: '0.5%',
     width: '16%',
     display: 'flex',
@@ -36,8 +36,8 @@ const get_style = () => ({
     marginLeft: '1%',
     borderRadius: '4px',
     backgroundColor: '#282828',
-    paddingLeft: '0.5%',
-    paddingRight: '0.5%',
+    paddingLeft: '1%',
+    paddingRight: '1%',
     color: 'white',
   },
 

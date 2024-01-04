@@ -21,11 +21,11 @@ function get_neighbours({ grid_data, row, col }) {
 }
 
 
-function Cell({ grid_data, cell, row, col, color }) {
+const Cell = React.memo(({ grid_data, cell, row, col, color }) => {
   if (cell.type === 'endpoint') return <Endpoint color={color} />;
   if (cell.type === 'path') return <Path grid_data={grid_data} row={row} col={col} color={color} />;
   else return <div></div>;
-}
+});
 
 function Endpoint({ color }) {
   return (
