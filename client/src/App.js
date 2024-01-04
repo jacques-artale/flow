@@ -12,7 +12,6 @@ const INITIAL_HEIGHT = 10;
 
 function App() {
 
-  const [theme, set_theme] = useState('dark');  // ['light', 'dark']
   const [show_solution, set_show_solution] = useState(false);
 
   const [grid_data, set_grid_data] = useState([[]]);
@@ -29,7 +28,7 @@ function App() {
 
   const [generating, set_generating] = useState(false);
 
-  const style = get_style(theme);
+  const style = get_style();
 
   // Reset the puzzle when the grid data changes
   useEffect(() => {
@@ -115,7 +114,6 @@ function App() {
     <div style={style.main}>
       <h1 style={{marginTop: 0}}>Flow Numberlink</h1>
 
-      <button style={style.button} onClick={() => set_theme(theme === 'light' ? 'dark' : 'light')}>Toggle Theme</button>
       <button style={style.button} onClick={() => set_show_solution(!show_solution)}>{show_solution ? 'Hide Solution' : 'Show Solution'}</button>
       <button style={style.button} onClick={() => resetBoard()}>Reset Board</button>
       
